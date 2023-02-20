@@ -15,29 +15,29 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
+
 public class Controller {
     private Logger logger = LoggerFactory.getLogger(Controller.class);
 
-
-    UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/checknickname/{nickname}")
     public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
-        logger.info("[CheckNickname] Parameter {}",nickname);
+        logger.info("[CheckNickname] Parameter: {}",nickname);
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
     @PostMapping()
     public ResponseEntity<UserLoginRes> registUser(@Valid @RequestBody RegistUserReq userReq){
-        logger.info("[Regist User] Parameter {}",userReq);
+        logger.info("[Regist User] Parameter: {}",userReq);
         UserLoginRes res = null;
         return ResponseEntity.status(200).body(res);
     }
 
     @GetMapping("/{code}")
     public ResponseEntity<UserLoginRes> login(@PathVariable String code){
-        logger.info("[login User] Parameter {}",code);
+        logger.info("[login User] Parameter: {}",code);
         UserLoginRes res = null;
         return ResponseEntity.status(200).body(res);
     }
