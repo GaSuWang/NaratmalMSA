@@ -5,6 +5,9 @@ import com.naratmal.user.db.User;
 import com.naratmal.user.db.UserRepository;
 import com.naratmal.user.dto.UserLoginRes;
 import com.naratmal.user.utils.KakaoUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ public class UserServiceImpl implements UserService{
     @Autowired
     UserRepository userRepository;
 
+    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     /*
     * nickname search 결과 null이면 해당 닉네임 사용 가능 return true
@@ -47,15 +51,23 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserLoginRes login(String code) throws Exception {
-        String accessToken = KakaoUtil.getKakaoAccessToken(code);
-        String kakaoEmail = KakaoUtil.getKakaoEmail(accessToken);
+    public UserLoginRes login(String code) {
+        String accessToken="";
+        String kakaoEmail="";
+        try {
+            accessToken = KakaoUtil.getKakaoAccessToken(code);
+            kakaoEmail = KakaoUtil.getKakaoEmail(accessToken);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+
+
         User user = userRepository.findByUserEmail(kakaoEmail);
         if(user==null){
             return UserLoginRes.builder()
                     .loginResult("fail")
                     .isSignUp(true)
-                    .email(user.getUserEmail())
+                    .email("")
                     .build();
         } else {
             return UserLoginRes.builder()

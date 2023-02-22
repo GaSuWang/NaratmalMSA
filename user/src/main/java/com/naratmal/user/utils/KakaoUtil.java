@@ -95,7 +95,7 @@ public class KakaoUtil {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            String kakaoAccount = (String) new Gson().fromJson(result, Map.class).get("kakao_account");
+            String kakaoAccount = new Gson().fromJson(result, Map.class).get("kakao_account").toString();
             String resEmail = (String) new Gson().fromJson(kakaoAccount, Map.class).get("email");
             return resEmail;
         } catch (ProtocolException e) {
