@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserLoginRes {
     Boolean isSignUp;
-    String loginResult;
+    String accessToken;
+    String refreshToken;
     String email;
 }

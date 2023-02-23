@@ -37,6 +37,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    implementation "com.auth0:java-jwt:3.10.3"
+
 
 }
 
