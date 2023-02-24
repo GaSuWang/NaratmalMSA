@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserLoginRes login(String code) {
+    public UserLoginRes login(String code) throws Exception {
         String accessToken = "";
         String kakaoEmail = "";
         try {
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             kakaoEmail = KakaoUtil.getKakaoEmail(accessToken);
             logger.info("[ Kakao Email ]: {}",kakaoEmail);
         } catch (Exception e) {
-            logger.error("error", e);
+            throw e;
         }
 
 

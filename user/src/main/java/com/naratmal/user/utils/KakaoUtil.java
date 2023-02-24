@@ -45,10 +45,9 @@ public class KakaoUtil {
             bw.write(sb.toString());
             bw.flush();
             int responseCode = connection.getResponseCode();
-            logger.info("KaKao getToken responseCode: {}", responseCode);
+            logger.info("Kakao getToken responseCode: {}", responseCode);
             if (responseCode != 200) {
-                logger.error("Kakao Get Token Request Error");
-                throw new Exception("Connection Fail");
+                throw new Exception("Kakao API Connection Fail During Get Token: ResponseCode [ "+responseCode+" ]");
             }
             br = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")));
             String output;
@@ -66,9 +65,9 @@ public class KakaoUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            connection.disconnect();
-            bw.close();
-            br.close();
+            close(connection);
+            close(bw);
+            close(br);
         }
     }
 
@@ -84,8 +83,7 @@ public class KakaoUtil {
             connection.setRequestProperty("Authorization", "Bearer " + accessToken);
 
             if (connection.getResponseCode() != 200) {
-                logger.error("Kakao Get Email Request Error");
-                throw new Exception("Connection Fail");
+                throw new Exception("Kakao API Connection Fail During Get Email: ResponseCode [ "+connection.getResponseCode()+" ]");
             }
 
             br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -105,8 +103,25 @@ public class KakaoUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            connection.disconnect();
+            close(connection);
+            close(br);
+        }
+    }
+
+
+    private static void close(BufferedReader br) throws Exception{
+        if(br!=null){
             br.close();
+        }
+    }
+    private static void close(BufferedWriter bw) throws Exception{
+        if(bw!=null){
+            bw.close();
+        }
+    }
+    private static void close(HttpURLConnection connection) throws Exception{
+        if(connection!=null){
+            connection.disconnect();
         }
     }
 }

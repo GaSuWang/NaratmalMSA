@@ -50,8 +50,8 @@ public class Controller {
         try {
             res = userService.login(code);
         } catch (Exception e) {
-            logger.error("error: {}",e.getStackTrace());
-            return ResponseEntity.status(903).body(null);
+            logger.error("error: ",e);
+            return ResponseEntity.status(500).body(null);
         }
         return ResponseEntity.status(200).body(res);
     }
