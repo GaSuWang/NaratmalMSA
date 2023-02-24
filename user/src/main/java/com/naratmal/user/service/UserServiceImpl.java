@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -95,5 +97,11 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
+    }
+
+    @Override
+    public String reissueToken(String refreshToken) {
+        String userEmail = JwtUtil.getUserEmail(refreshToken);
+        return JwtUtil.getAccessToken(userEmail);
     }
 }

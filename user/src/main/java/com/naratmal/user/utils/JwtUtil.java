@@ -64,6 +64,10 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC512(refreshSecretKey.getBytes()));
     }
 
+    public static String getUserEmail(String refreshToken){
+        return JWT.decode(refreshToken).getPayload();
+    }
+
 
     public static Date getTokenExpiration(int expirationTime) {
         Date now = new Date();

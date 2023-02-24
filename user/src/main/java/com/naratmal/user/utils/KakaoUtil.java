@@ -22,7 +22,7 @@ public class KakaoUtil {
     public static String getKakaoAccessToken(String code) throws Exception {
         String accessToken = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
-        String apiKey = "";
+        String apiKey = "77f6e1649bf8e9de2d17b8270ad693c2";
         //String redirectUri = "http://localhost:8083/api/user/redirect";
         String redirectUri = "http://localhost:3000/oauth/callback/kakao";
         HttpURLConnection connection = null;

@@ -56,4 +56,8 @@ public class Controller {
         return ResponseEntity.status(200).body(res);
     }
 
+    @GetMapping("/accessToken/{refreshToken}")
+    public String getAccessToken (@PathVariable String refreshToken){
+        return userService.reissueToken(refreshToken);
+    }
 }
