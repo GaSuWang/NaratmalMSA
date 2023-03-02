@@ -9,3 +9,6 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/api/user/**
+          filters:
+            - RewritePath=/api/user/?(?<segment>.*), /api/$\{segment}
+            - LoginFilter
