@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -56,9 +57,9 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(saveUser);
 
         String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-        String refreshJWT = JwtUtil.getRefreshToken(user.getUserEmail());
-
-        res = UserLoginRes.builder().accessToken(accessJWT).refreshToken(refreshJWT).email(user.getUserEmail()).isSignUp(false).build();
+        String refreshToken = UUID.randomUUID().toString();
+        //TODO refresh token redis 저장
+        res = UserLoginRes.builder().accessToken(accessJWT).refreshToken(refreshToken).email(user.getUserEmail()).isSignUp(false).build();
         return res;
     }
 
@@ -87,11 +88,11 @@ public class UserServiceImpl implements UserService {
             logger.info("[ Login Success ] {}",kakaoEmail);
             //access & refresh token return
             String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-            String refreshJWT = JwtUtil.getRefreshToken(user.getUserEmail());
-
+            String refreshToken = UUID.randomUUID().toString();
+            //TODO refresh token redis 저장
             return UserLoginRes.builder()
                     .accessToken(accessJWT)
-                    .refreshToken(refreshJWT)
+                    .refreshToken(refreshToken)
                     .isSignUp(false)
                     .email(user.getUserEmail())
                     .build();

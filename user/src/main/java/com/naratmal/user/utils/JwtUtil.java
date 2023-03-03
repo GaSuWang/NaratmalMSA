@@ -13,9 +13,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private static String accessSecretKey;
-    private static String refreshSecretKey;
     private static Integer accessExpirationTime;
-    private static Integer refreshExpirationTime;
 
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
@@ -23,13 +21,10 @@ public class JwtUtil {
 
     @Autowired
     public JwtUtil(@Value("${jwt.secret.access}") String accessSecretKey,
-                   @Value("${jwt.secret.refresh}") String refreshSecretKey,
                    @Value("${jwt.expiration.access}") Integer accessExpirationTime,
                    @Value("${jwt.expiration.refresh}") Integer refreshExpirationTime) {
         this.accessSecretKey = accessSecretKey;
-        this.refreshSecretKey = refreshSecretKey;
         this.accessExpirationTime = accessExpirationTime;
-        this.refreshExpirationTime = refreshExpirationTime;
     }
 
 //    public void setExpirationTime() {
@@ -54,15 +49,6 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC512(accessSecretKey.getBytes()));
     }
 
-    public static String getRefreshToken(String userEmail) {
-        Date expires = JwtUtil.getTokenExpiration(refreshExpirationTime);
-        return JWT.create()
-                .withSubject(userEmail)
-                .withExpiresAt(expires)
-                .withIssuer(ISSUER)
-                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                .sign(Algorithm.HMAC512(refreshSecretKey.getBytes()));
-    }
 
     public static String getUserEmail(String refreshToken){
         return JWT.decode(refreshToken).getPayload();
