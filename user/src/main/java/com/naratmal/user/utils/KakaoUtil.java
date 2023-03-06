@@ -3,6 +3,7 @@ package com.naratmal.user.utils;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 
@@ -19,12 +20,16 @@ import java.util.Map;
 public class KakaoUtil {
     private static Logger logger = LoggerFactory.getLogger(KakaoUtil.class);
 
+    private static String apiKey="77f6e1649bf8e9de2d17b8270ad693c2";
+
+    private static String redirectUri="http://localhost:3000/oauth/callback/kakao";
+
     public static String getKakaoAccessToken(String code) throws Exception {
         String accessToken = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
-        String apiKey = "";
+
         //String redirectUri = "http://localhost:8083/api/user/redirect";
-        String redirectUri = "http://localhost:3000/oauth/callback/kakao";
+        //String redirectUri = "http://localhost:3000/oauth/callback/kakao";
         HttpURLConnection connection = null;
         BufferedWriter bw = null;
         BufferedReader br = null;
@@ -47,7 +52,16 @@ public class KakaoUtil {
             int responseCode = connection.getResponseCode();
             logger.info("Kakao getToken responseCode: {}", responseCode);
             if (responseCode != 200) {
-                throw new Exception("Kakao API Connection Fail During Get Token: ResponseCode [ "+responseCode+" ]");
+                br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line = "";
+                String error = "";
+
+                while ((line = br.readLine()) != null) {
+                    error += line;
+                }
+                logger.error("",error);
+
+                throw new Exception("Kakao API Connection Fail During Get Token: ResponseCode [ "+responseCode+" ]\n"+error);
             }
             br = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charset.forName("UTF-8")));
             String output;
@@ -83,7 +97,15 @@ public class KakaoUtil {
             connection.setRequestProperty("Authorization", "Bearer " + accessToken);
 
             if (connection.getResponseCode() != 200) {
-                throw new Exception("Kakao API Connection Fail During Get Email: ResponseCode [ "+connection.getResponseCode()+" ]");
+                br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line = "";
+                String error = "";
+
+                while ((line = br.readLine()) != null) {
+                    error += line;
+                }
+                logger.error("",error);
+                throw new Exception("Kakao API Connection Fail During Get Email: ResponseCode [ "+connection.getResponseCode()+" ]\n"+error);
             }
 
             br = new BufferedReader(new InputStreamReader(connection.getInputStream()));

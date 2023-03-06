@@ -57,8 +57,12 @@ public class Controller {
     }
 
     @GetMapping("/accessToken/{refreshToken}")
-    public String getAccessToken (@PathVariable String refreshToken){
-        return userService.reissueToken(refreshToken);
+    public ResponseEntity<String> getAccessToken (@PathVariable String refreshToken){
+        try{
+            return ResponseEntity.status(200).body(userService.reissueToken(refreshToken));
+        } catch (RuntimeException e){
+            return ResponseEntity.status(902).body("INVALID_REFRESH_TOKEN");
+        }
     }
 
 

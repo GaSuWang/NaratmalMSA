@@ -1,6 +1,8 @@
 package com.naratmal.user.service;
 
 
+import com.naratmal.user.db.RefreshToken;
+import com.naratmal.user.db.TokenRedisRepository;
 import com.naratmal.user.db.User;
 import com.naratmal.user.db.UserRepository;
 import com.naratmal.user.dto.UserLoginRes;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,6 +23,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    TokenRedisRepository tokenRedisRepository;
 
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -57,8 +62,10 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(saveUser);
 
         String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-        String refreshToken = UUID.randomUUID().toString();
-        //TODO refresh token redis 저장
+        String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail());
+
+        //refresh token redis 저장
+        tokenRedisRepository.save(new RefreshToken(user.getUserEmail(),refreshToken));
         res = UserLoginRes.builder().accessToken(accessJWT).refreshToken(refreshToken).email(user.getUserEmail()).isSignUp(false).build();
         return res;
     }
@@ -88,8 +95,10 @@ public class UserServiceImpl implements UserService {
             logger.info("[ Login Success ] {}",kakaoEmail);
             //access & refresh token return
             String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-            String refreshToken = UUID.randomUUID().toString();
-            //TODO refresh token redis 저장
+            String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail());
+
+            //refresh token redis 저장
+            tokenRedisRepository.save(new RefreshToken(user.getUserEmail(),refreshToken));
             return UserLoginRes.builder()
                     .accessToken(accessJWT)
                     .refreshToken(refreshToken)
@@ -103,6 +112,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String reissueToken(String refreshToken) {
         String userEmail = JwtUtil.getUserEmail(refreshToken);
+        Optional<RefreshToken> token = tokenRedisRepository.findById(userEmail);
+        if(token.isEmpty()||!token.get().getToken().equals(refreshToken)) {
+            throw new RuntimeException("Invalid RefreshToken");
+        }
+
         return JwtUtil.getAccessToken(userEmail);
     }
 }
