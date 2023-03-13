@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
         UpdateRes res = UpdateRes.builder()
                 .userLocation(updatedUser.getUserLocation())
                 .userName(updatedUser.getUserName())
-                .userLocation(updatedUser.getUserLocation())
+                .userNickname(updatedUser.getUserNickname())
                 .build();
 
         return res;
