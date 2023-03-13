@@ -1,6 +1,8 @@
 package com.naratmal.gateway.filter;
 
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -35,15 +37,20 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Jw
                 return returnError(response,"NOT_EXIST_TOKEN",HttpStatus.UNAUTHORIZED);
             }
             //토큰 가져오기
-            String token = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0);
+            String token = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION).get(0).split(" ")[1];
             //토큰 유효성 검사
+            DecodedJWT decodedJWT = null;
             try{
-                //Leeway -> 여유시간
-                JWT.require(Algorithm.HMAC512(accessSecretKey.getBytes())).acceptLeeway(5).build().verify(token);
+
+                Algorithm algo = Algorithm.HMAC512(accessSecretKey);
+                JWTVerifier verifier = JWT.require(algo).withIssuer("naratmalssafy").build();
+                decodedJWT = verifier.verify(token);
             } catch (Exception e){
+                System.out.println(e);
                 return returnError(response,"INVALID_TOKEN",HttpStatus.UNAUTHORIZED);
             }
-            String payload = JWT.decode(token).getPayload();
+
+            String payload = decodedJWT.getPayload();
             String decodePayload = new String(Base64.getUrlDecoder().decode(payload));
             String userEmail = new Gson().fromJson(decodePayload, Map.class).get("sub").toString();
 
