@@ -3,6 +3,8 @@ package com.naratmal.user.controller;
 
 import com.naratmal.user.db.User;
 import com.naratmal.user.dto.RegistUserReq;
+import com.naratmal.user.dto.UpdateReq;
+import com.naratmal.user.dto.UpdateRes;
 import com.naratmal.user.dto.UserLoginRes;
 import com.naratmal.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -64,6 +66,19 @@ public class Controller {
             return ResponseEntity.status(902).body("INVALID_REFRESH_TOKEN");
         }
     }
+
+    @PutMapping()
+    public ResponseEntity<UpdateRes> updateUser (@RequestBody UpdateReq req, @RequestHeader(value = "Authorization-Email") String userEmail){
+        Long userSeq = userService.getUserSeq(userEmail);
+        UpdateRes res = userService.updateUser(userSeq,userEmail,req.getUserLocation(),req.getUserName(),req.getUserNickname());
+        return ResponseEntity.status(200).body(res);
+    }
+    
+
+//    @GetMapping()
+//    public ResponseEntity<GetInfo> getUserInfo(){
+//
+//    }
 
 
 }

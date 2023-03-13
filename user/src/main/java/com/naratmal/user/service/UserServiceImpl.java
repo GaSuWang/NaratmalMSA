@@ -5,6 +5,8 @@ import com.naratmal.user.db.RefreshToken;
 import com.naratmal.user.db.TokenRedisRepository;
 import com.naratmal.user.db.User;
 import com.naratmal.user.db.UserRepository;
+import com.naratmal.user.dto.UpdateRes;
+import com.naratmal.user.dto.UserInfo;
 import com.naratmal.user.dto.UserLoginRes;
 import com.naratmal.user.utils.JwtUtil;
 import com.naratmal.user.utils.KakaoUtil;
@@ -118,5 +120,33 @@ public class UserServiceImpl implements UserService {
         }
 
         return JwtUtil.getAccessToken(userEmail);
+    }
+
+    @Override
+    public UpdateRes updateUser(Long userSeq, String userEmail, String userLocation, String userName, String userNickname) {
+        User user = User.builder()
+                .userSeq(userSeq)
+                .userEmail(userEmail)
+                .userLocation(userLocation)
+                .userName(userName).
+                userNickname(userNickname).build();
+        User updatedUser = userRepository.save(user);
+        UpdateRes res = UpdateRes.builder()
+                .userLocation(updatedUser.getUserLocation())
+                .userName(updatedUser.getUserName())
+                .userLocation(updatedUser.getUserLocation())
+                .build();
+
+        return res;
+    }
+
+    @Override
+    public UserInfo getUserInfo(String userEmail) {
+        return null;
+    }
+
+    @Override
+    public Long getUserSeq(String userEmail) {
+        return userRepository.findByUserEmail(userEmail).getUserSeq();
     }
 }
