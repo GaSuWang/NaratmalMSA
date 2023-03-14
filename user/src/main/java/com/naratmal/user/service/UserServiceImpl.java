@@ -142,7 +142,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfo getUserInfo(String userEmail) {
-        return null;
+        User user = userRepository.findByUserEmail(userEmail);
+        //TODO 폰트관련 로직 추가 필요
+        UserInfo res = UserInfo.builder()
+                .userEmail(user.getUserEmail())
+                .userLocation(user.getUserLocation())
+                .userName(user.getUserName())
+                .userNickname(user.getUserNickname())
+                .build();
+
+        return res;
     }
 
     @Override

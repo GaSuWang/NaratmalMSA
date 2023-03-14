@@ -2,10 +2,7 @@ package com.naratmal.user.controller;
 
 
 import com.naratmal.user.db.User;
-import com.naratmal.user.dto.RegistUserReq;
-import com.naratmal.user.dto.UpdateReq;
-import com.naratmal.user.dto.UpdateRes;
-import com.naratmal.user.dto.UserLoginRes;
+import com.naratmal.user.dto.*;
 import com.naratmal.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -75,10 +72,12 @@ public class Controller {
     }
     
 
-//    @GetMapping()
-//    public ResponseEntity<GetInfo> getUserInfo(){
-//
-//    }
+    @GetMapping()
+    public ResponseEntity<UserInfo> getUserInfo(@RequestHeader(value = "Authorization-Email") String userEmail){
+        UserInfo res = userService.getUserInfo(userEmail);
+
+        return ResponseEntity.status(200).body(res);
+    }
 
 
 }
