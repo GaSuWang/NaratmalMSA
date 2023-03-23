@@ -1,25 +1,38 @@
 package api
 
-import "github.com/gin-gonic/gin"
 import (
-	"gorm.io/driver/mysql"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+import (
 	"gorm.io/gorm"
+	DB "note/src/db"
 )
 
 type Note struct {
 	gorm.Model
-	noteSeq int64
+	noteSeq  int64
+	fontSeq  int64
+	writer   string
+	location string
+	title    string
+	contents string
+	color    string
+}
+
+type NoteRes struct {
+	padletList []Note
 }
 
 func GetNote(context *gin.Context) {
 	//1. location 가져오기
-	location := context.Param("location")
-	db, err := gorm.Open(mysql.Open("note.db"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
+	location := "서울"
+	conn := DB.GetInstance()
 	var notes []Note
-	db.Where("location LIKE ?", location).Find(&notes)
+
 	//2. DB에서 location 기반으로 select
+	conn.Where("location LIKE ?", location).Find(&notes)
 	//3. 결과 담아서 반환
+	noteRes := NoteRes{notes}
+	context.JSON(http.StatusOK, noteRes)
 }

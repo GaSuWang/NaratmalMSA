@@ -1,10 +1,14 @@
 package main
 
 //import "fmt"
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	DB "note/src/db"
+)
 import "note/src/api"
 
 func main() {
+	DB.GetInstance()
 	engine := gin.Default()
 	note := engine.Group("/note")
 	{
