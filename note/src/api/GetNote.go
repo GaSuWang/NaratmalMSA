@@ -5,30 +5,18 @@ import (
 	"net/http"
 )
 import (
-	"gorm.io/gorm"
 	DB "note/src/db"
 )
 
-type Note struct {
-	gorm.Model
-	noteSeq  int64
-	fontSeq  int64
-	writer   string
-	location string
-	title    string
-	contents string
-	color    string
-}
-
 type NoteRes struct {
-	padletList []Note
+	padletList []DB.Note
 }
 
 func GetNote(context *gin.Context) {
 	//1. location 가져오기
 	location := "서울"
 	conn := DB.GetInstance()
-	var notes []Note
+	var notes []DB.Note
 
 	//2. DB에서 location 기반으로 select
 	conn.Where("location LIKE ?", location).Find(&notes)

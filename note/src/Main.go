@@ -14,7 +14,7 @@ func main() {
 	{
 		note.GET("/:location", api.GetNote)
 		note.POST("", api.RegistNote)
-		note.DELETE("/:location", api.DeleteNote)
+		note.DELETE("", api.DeleteNote)
 	}
 	engine.Run(":8181")
 }
