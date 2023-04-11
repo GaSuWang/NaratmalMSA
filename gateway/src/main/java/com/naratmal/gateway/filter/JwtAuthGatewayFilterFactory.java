@@ -59,7 +59,7 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Jw
 
             request.mutate().header("Authorization-Email",userEmail);
             request.mutate().header("User-FullName",userFullName);
-                    
+
 
 
 
