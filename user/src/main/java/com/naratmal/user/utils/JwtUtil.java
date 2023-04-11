@@ -47,20 +47,22 @@ public class JwtUtil {
 //                .build();
 //    }
 
-    public static String getAccessToken(String userEmail) {
+    public static String getAccessToken(String userEmail, String fullName) {
         Date expires = JwtUtil.getTokenExpiration(accessExpirationTime);
         return JWT.create()
                 .withSubject(userEmail)
+                .withClaim("fullName",fullName)
                 .withExpiresAt(expires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
                 .sign(Algorithm.HMAC512(accessSecretKey.getBytes()));
     }
 
-    public static String getRefreshToken(String userEmail) {
+    public static String getRefreshToken(String userEmail, String fullName) {
         Date expires = JwtUtil.getTokenExpiration(refreshExpirationTime);
         return JWT.create()
                 .withSubject(userEmail)
+                .withClaim("fullName",fullName)
                 .withExpiresAt(expires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))

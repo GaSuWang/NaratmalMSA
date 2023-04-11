@@ -62,9 +62,9 @@ public class UserServiceImpl implements UserService {
         }
 
         user = userRepository.save(saveUser);
-
-        String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-        String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail());
+        String fullName = user.getUserLocation()+"_"+user.getUserName()+"_"+user.getUserNickname();
+        String accessJWT = JwtUtil.getAccessToken(user.getUserEmail(),fullName);
+        String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail(),fullName);
 
         //refresh token redis 저장
         tokenRedisRepository.save(new RefreshToken(user.getUserEmail(),refreshToken));
@@ -96,8 +96,11 @@ public class UserServiceImpl implements UserService {
         } else {
             logger.info("[ Login Success ] {}",kakaoEmail);
             //access & refresh token return
-            String accessJWT = JwtUtil.getAccessToken(user.getUserEmail());
-            String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail());
+
+
+            String fullName = user.getUserLocation()+"_"+user.getUserName()+"_"+user.getUserNickname();
+            String accessJWT = JwtUtil.getAccessToken(user.getUserEmail(),fullName);
+            String refreshToken = JwtUtil.getRefreshToken(user.getUserEmail(),fullName);
 
             //refresh token redis 저장
             tokenRedisRepository.save(new RefreshToken(user.getUserEmail(),refreshToken));
@@ -115,11 +118,12 @@ public class UserServiceImpl implements UserService {
     public String reissueToken(String refreshToken) {
         String userEmail = JwtUtil.getUserEmail(refreshToken);
         Optional<RefreshToken> token = tokenRedisRepository.findById(userEmail);
-        if(token.isEmpty()||!token.get().getToken().equals(refreshToken)) {
+        if(!token.isPresent()||!token.get().getToken().equals(refreshToken)) {
             throw new RuntimeException("Invalid RefreshToken");
         }
-
-        return JwtUtil.getAccessToken(userEmail);
+        User user = userRepository.findByUserEmail(userEmail);
+        String fullName = user.getUserLocation()+"_"+user.getUserName()+"_"+user.getUserNickname();
+        return JwtUtil.getAccessToken(user.getUserEmail(),fullName);
     }
 
     @Override
