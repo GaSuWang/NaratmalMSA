@@ -52,10 +52,14 @@ public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Jw
 
             String payload = decodedJWT.getPayload();
             String decodePayload = new String(Base64.getUrlDecoder().decode(payload));
-            String userEmail = new Gson().fromJson(decodePayload, Map.class).get("sub").toString();
+            Map<String,Object> map = new Gson().fromJson(decodePayload,Map.class);
+            String userEmail = map.get("sub").toString();
+            String userFullName = map.get("fullName").toString();
 
 
             request.mutate().header("Authorization-Email",userEmail);
+            request.mutate().header("User-FullName",userFullName);
+                    
 
 
 
